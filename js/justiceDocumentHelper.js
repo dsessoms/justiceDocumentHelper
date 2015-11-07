@@ -20,3 +20,4 @@ NLCDocumentGroups = Backbone.Collection.extend({
 $({
   var documents = new NLCDocumentGroups([]);
 });
+
