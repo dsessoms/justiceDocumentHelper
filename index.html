@@ -28,8 +28,25 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
   </head>
   <body>
-	<nav class="navbar navbar-default" role="navigation">
-	   <div class="title" > Document Mailer </div>
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <div class="title h2" href="#">
+	        Document Helper
+	      </div>
+	    </div>
+	    <div id="emailToggle" class="btn-group" role="group" aria-label="...">
+		  <button type="button" class="btn btn-default"> Email </button>
+		  <button type="button" class="btn btn-default"> Mail </button>
+	   </div>
+	  </div>
+	</nav>
+
+	<nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+		<div class="form-group">
+		    <input type="email" class="form-control" id="emailAddress" placeholder="default: legalAid@gmail.com">
+		</div>
+		<button id="send" type="button" class="btn btn-primary"> Send </button>
 	</nav>
 
   <script id="docGroup" type="text/template">
