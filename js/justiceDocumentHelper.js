@@ -54,12 +54,16 @@ Views.NLCDocumentGroup = Backbone.View.extend({
   template: null,
   initialize: function() {
     this.template = _.template($('#docGroup').html());
-    this.collection = new Collections.NLCDocuments(this.model.get("links"));
   },
-  render: function() {
+  render: function(filterMails) {
     this.$el.html(this.template(this.model.toJSON()));
     var $links = this.$el.find(".list-group"); 
     $links.empty();
+    
+    this.collection = new Collections.NLCDocuments(this.model.get("links"));
+    if(filterMails) {
+      this.collection = new Collections.NLCDocuments(this.collection.where({mail: true}));
+    }
     this.collection.each(function(model) {
       var nlcDocument = new Views.NLCDocument({
         model: model
@@ -85,14 +89,32 @@ Views.NLC = Backbone.View.extend({
     this.render();
   },
   render: function() {
-    this.$el.empty();
+    var $main = this.$el.find("#main");
+    $main.empty();
     var that = this;
     this.collection.each(function(group) {
       var nlcDocumentGroup = new Views.NLCDocumentGroup({
         model: group
       });
-      that.$el.append(nlcDocumentGroup.render().el);
+      $main.append(nlcDocumentGroup.render(that.mode == "mail").el);
     });
+  },
+  events:
+  {
+    "click #emailButton": "emailMode", 
+    "click #mailButton": "mailMode", 
+  },
+  emailMode: function() {
+    this.mode = "email";
+    this.$el.find("#mailButton").removeClass("active");
+    this.$el.find("#emailButton").addClass("active");
+    this.render();
+  },
+  mailMode: function() {
+    this.mode = "mail";
+    this.$el.find("#emailButton").removeClass("active");
+    this.$el.find("#mailButton").addClass("active");
+    this.render();
   },
   getLinksFromCSV : function() {
     //Where we parse the csv and then return the Array of JSON
@@ -100,17 +122,17 @@ Views.NLC = Backbone.View.extend({
       {
         groupName: "First Group",
         links: [
-          { linkName: "Test Document 1"},
-          { linkName: "Test Document 2"},
-          { linkName: "Test Document 3"}
+          { linkName: "Test Document 1", mail: true},
+          { linkName: "Test Document 2", mail: false},
+          { linkName: "Test Document 3", mail: true}
         ]
       },
       {
         groupName: "Second Group",
         links: [
-          { linkName: "Test Document 4"},
-          { linkName: "Test Document 5"},
-          { linkName: "Test Document 6"}
+          { linkName: "Test Document 4", mail: false},
+          { linkName: "Test Document 5", mail: true},
+          { linkName: "Test Document 6", mail: true}
         ]
       }
     ];
@@ -121,7 +143,6 @@ Views.NLC = Backbone.View.extend({
 
 $(function() {
   var documentGroup = new Views.NLC({
-    el: $("#main")
+    el: $("body")
   });
 });
-
