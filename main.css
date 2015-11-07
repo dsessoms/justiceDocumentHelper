@@ -1,3 +1,5 @@
+body { padding-bottom: 120px; }
+
 #emailAddress { 
 	margin-top: 10px;
 }
@@ -10,7 +12,7 @@
 {
 	background-color: white; 
 	color: black;
-	outline-color: white;
+	border: none;
 	margin-bottom: 10px;
 }
 
@@ -23,13 +25,20 @@
 	margin-top: 10px;
 }
 
+#info {
+	border-radius: 24px;
+	background-color: rgb(222,0,100);
+	border: none;
+	margin-right: 10px;
+	margin-top: 10px;
+}
+
 .title{
 	color: white;
 }
 
 .btn-group{
 	display: inline-block;
-	margin-bottom: 10px;
 }
 
 .navbar { 
