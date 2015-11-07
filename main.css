@@ -62,3 +62,8 @@ body { padding-bottom: 120px; }
    margin-right:0;
    float:right;
 }
+
+.panel-heading{
+	background-color: rgb(222,222,222);
+	font-weight:bold;
+}
