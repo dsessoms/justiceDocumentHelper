@@ -1,15 +1,40 @@
-.title
+#emailAddress { 
+	margin-top: 10px;
+}
+
+#emailToggle{
+	display: inline-block;
+}
+
+.title{
+	color: white;
+}
+
+.btn-group{
+	display: inline-block;
+	margin-bottom: 10px;
+}
+
+#send
 {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 0;
-    text-align: center;
-    margin: auto;
-    color: white;
+	background-color: white; 
+	color: black;
+	outline-color: white;
+	margin-bottom: 10px;
 }
 
 .navbar { 
 	background-color: rgb(222,0,100);
+	text-align: center;
 }
 
+.navbar .navbar-nav { 
+	display: inline-block;
+  	float: none;
+  	vertical-align: top;
+}
+
+.navbar-fixed-bottom 
+{
+	text-align: center;
+}
