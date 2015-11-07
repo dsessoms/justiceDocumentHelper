@@ -109,28 +109,12 @@ Views.NLC = Backbone.View.extend({
     // });
 
     var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
-          "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\n"+
-          "Client Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE";
+          "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\nClient Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—Spanish,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY2,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-English.pdf,FALSE";
 
     var arr1 = csvToArray(str1);
     // console.log(arr1);
     var links = arrToJson(arr1);
     console.log(links);
-
-    //convert array to json
-    // function arrToJson(arr){
-    //   var arr2 = [];
-    //   for(var i=1; i<arr.length; i++){
-    //     var obj = {};
-    //     obj["links"] = {};
-    //     obj["links"]["linkName"] = arr[i][0];
-    //     obj["groupName"] = arr[i][1];
-    //     obj["links"]["linkURL"] = arr[i][2];
-    //     obj["links"]["mail"] = Boolean.valueOf(arr[i][3])();
-    //     arr2.push(obj);
-    //   }
-    //   return arr2;
-    // }
 
     //convert array to json
     function arrToJson(arr){
@@ -149,7 +133,6 @@ Views.NLC = Backbone.View.extend({
         obj1["linkName"] = arr[i][0];
         obj1["linkURL"] = arr[i][2];
         obj1["mail"] = Boolean.valueOf(arr[i][3])();
-        console.log(obj1);
         arr2[arr[i][1]]["links"].push(obj1);
       }
       var arr3 = [];
