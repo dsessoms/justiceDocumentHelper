@@ -6,20 +6,20 @@
 	display: inline-block;
 }
 
+#send
+{
+	background-color: white; 
+	color: black;
+	outline-color: white;
+	margin-bottom: 10px;
+}
+
 .title{
 	color: white;
 }
 
 .btn-group{
 	display: inline-block;
-	margin-bottom: 10px;
-}
-
-#send
-{
-	background-color: white; 
-	color: black;
-	outline-color: white;
 	margin-bottom: 10px;
 }
 
@@ -37,4 +37,10 @@
 .navbar-fixed-bottom 
 {
 	text-align: center;
+}
+
+.documentSelect
+{
+   margin-right:0;
+   float:right;
 }
