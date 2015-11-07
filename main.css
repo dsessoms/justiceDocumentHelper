@@ -1,4 +1,15 @@
-body { padding-bottom: 120px; }
+body { 
+	padding-bottom: 160px; 
+	padding-top: 150px; 
+}
+
+#emailButton {
+	min-width: 90px;
+}
+
+#mailButton {
+	min-width: 90px;
+}
 
 #emailAddress { 
 	margin-top: 10px;
