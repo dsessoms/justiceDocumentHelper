@@ -32,6 +32,7 @@ Views.NLCDocument = Backbone.View.extend({
   },
   render: function() {
     this.$el.html(this.template(this.model.toJSON()));
+    this.$el.find("input").prop('checked', this.model.get("isSelected"));
     return this;
   },
   events: 
@@ -56,11 +57,15 @@ Views.NLCDocumentGroup = Backbone.View.extend({
     this.template = _.template($('#docGroup').html());
     this.collection = new Collections.NLCDocuments(this.model.get("links"));
   },
-  render: function() {
+  render: function(filterMails) {
     this.$el.html(this.template(this.model.toJSON()));
     var $links = this.$el.find(".list-group"); 
     $links.empty();
     this.collection.each(function(model) {
+      if(filterMails && !model.get("mail")) 
+      {
+        return;
+      }
       var nlcDocument = new Views.NLCDocument({
         model: model
       });
@@ -81,22 +86,64 @@ Views.NLC = Backbone.View.extend({
   collection: null,
   initialize: function() {
     this.collection = new Collections.NLCDocumentGroups(this.getLinksFromCSV());
-    this.mode = "email"; 
-    this.render();
-  },
-  render: function() {
-    this.$el.empty();
+    this.subviews = [];
     var that = this;
     this.collection.each(function(group) {
       var nlcDocumentGroup = new Views.NLCDocumentGroup({
         model: group
       });
-      that.$el.append(nlcDocumentGroup.render().el);
+      that.subviews.push(nlcDocumentGroup);
     });
+    this.mode = "email"; 
+    this.render();
+  },
+  render: function() {
+    var $main = this.$el.find("#main");
+    $main.empty();
+    var that = this;
+    if(this.mode == "email")
+    {
+      this.$el.find("#mailButton").removeClass("active");
+      this.$el.find("#emailButton").addClass("active");
+      this.$el.find("#mailForm").hide("");
+      this.$el.find("#emailForm").show("");
+    }
+    else 
+    {
+      this.$el.find("#emailButton").removeClass("active");
+      this.$el.find("#mailButton").addClass("active");
+      this.$el.find("#emailForm").hide("");
+      this.$el.find("#mailForm").show("");
+    }
+    _.each(this.subviews, function(view)
+    {
+      $main.append(view.render(that.mode == "mail").el);
+    });
+  },
+  events:
+  {
+    "click #emailButton": "emailMode", 
+    "click #mailButton": "mailMode",
+    "click #send": "send" 
+  },
+  emailMode: function() {
+    this.mode = "email";
+    this.render();
+  },
+  mailMode: function() {
+    this.mode = "mail";
+    this.render();
+  },
+  send: function() {
+    var sendables =  [];
+    var that = this;
+    _.each(this.subviews, function(view) {
+      sendables.push(new Collections.NLCDocuments(view.collection.where({isSelected: true})).toJSON());
+    });
+    console.log(_.flatten(sendables));
   },
   getLinksFromCSV : function() {
     //Where we parse the csv and then return the Array of JSON
-
     // $.ajax({ //my ajax request
     //         url: "http://www.kcba.org/pbs/pdf/NLCMap.csv",
     //         type: "GET",
@@ -109,28 +156,12 @@ Views.NLC = Backbone.View.extend({
     // });
 
     var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
-          "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\n"+
-          "Client Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE";
+          "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\nClient Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—Spanish,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY2,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-English.pdf,FALSE";
 
     var arr1 = csvToArray(str1);
     // console.log(arr1);
     var links = arrToJson(arr1);
     console.log(links);
-
-    //convert array to json
-    // function arrToJson(arr){
-    //   var arr2 = [];
-    //   for(var i=1; i<arr.length; i++){
-    //     var obj = {};
-    //     obj["links"] = {};
-    //     obj["links"]["linkName"] = arr[i][0];
-    //     obj["groupName"] = arr[i][1];
-    //     obj["links"]["linkURL"] = arr[i][2];
-    //     obj["links"]["mail"] = Boolean.valueOf(arr[i][3])();
-    //     arr2.push(obj);
-    //   }
-    //   return arr2;
-    // }
 
     //convert array to json
     function arrToJson(arr){
@@ -149,7 +180,6 @@ Views.NLC = Backbone.View.extend({
         obj1["linkName"] = arr[i][0];
         obj1["linkURL"] = arr[i][2];
         obj1["mail"] = Boolean.valueOf(arr[i][3])();
-        console.log(obj1);
         arr2[arr[i][1]]["links"].push(obj1);
       }
       var arr3 = [];
@@ -248,7 +278,6 @@ Views.NLC = Backbone.View.extend({
 
 $(function() {
   var documentGroup = new Views.NLC({
-    el: $("#main")
+    el: $("body")
   });
 });
-
