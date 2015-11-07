@@ -32,6 +32,7 @@ Views.NLCDocument = Backbone.View.extend({
   },
   render: function() {
     this.$el.html(this.template(this.model.toJSON()));
+    this.$el.find("input").prop('checked', this.model.get("isSelected"));
     return this;
   },
   events: 
@@ -54,17 +55,17 @@ Views.NLCDocumentGroup = Backbone.View.extend({
   template: null,
   initialize: function() {
     this.template = _.template($('#docGroup').html());
+    this.collection = new Collections.NLCDocuments(this.model.get("links"));
   },
   render: function(filterMails) {
     this.$el.html(this.template(this.model.toJSON()));
     var $links = this.$el.find(".list-group"); 
     $links.empty();
-    
-    this.collection = new Collections.NLCDocuments(this.model.get("links"));
-    if(filterMails) {
-      this.collection = new Collections.NLCDocuments(this.collection.where({mail: true}));
-    }
     this.collection.each(function(model) {
+      if(filterMails && !model.get("mail")) 
+      {
+        return;
+      }
       var nlcDocument = new Views.NLCDocument({
         model: model
       });
@@ -85,6 +86,14 @@ Views.NLC = Backbone.View.extend({
   collection: null,
   initialize: function() {
     this.collection = new Collections.NLCDocumentGroups(this.getLinksFromCSV());
+    this.subviews = [];
+    var that = this;
+    this.collection.each(function(group) {
+      var nlcDocumentGroup = new Views.NLCDocumentGroup({
+        model: group
+      });
+      that.subviews.push(nlcDocumentGroup);
+    });
     this.mode = "email"; 
     this.render();
   },
@@ -92,50 +101,166 @@ Views.NLC = Backbone.View.extend({
     var $main = this.$el.find("#main");
     $main.empty();
     var that = this;
-    this.collection.each(function(group) {
-      var nlcDocumentGroup = new Views.NLCDocumentGroup({
-        model: group
-      });
-      $main.append(nlcDocumentGroup.render(that.mode == "mail").el);
+    if(this.mode == "email")
+    {
+      this.$el.find("#mailButton").removeClass("active");
+      this.$el.find("#emailButton").addClass("active");
+      this.$el.find("#mailForm").hide("");
+      this.$el.find("#emailForm").show("");
+    }
+    else 
+    {
+      this.$el.find("#emailButton").removeClass("active");
+      this.$el.find("#mailButton").addClass("active");
+      this.$el.find("#emailForm").hide("");
+      this.$el.find("#mailForm").show("");
+    }
+    _.each(this.subviews, function(view)
+    {
+      $main.append(view.render(that.mode == "mail").el);
     });
   },
   events:
   {
     "click #emailButton": "emailMode", 
-    "click #mailButton": "mailMode", 
+    "click #mailButton": "mailMode",
+    "click #send": "send" 
   },
   emailMode: function() {
     this.mode = "email";
-    this.$el.find("#mailButton").removeClass("active");
-    this.$el.find("#emailButton").addClass("active");
     this.render();
   },
   mailMode: function() {
     this.mode = "mail";
-    this.$el.find("#emailButton").removeClass("active");
-    this.$el.find("#mailButton").addClass("active");
     this.render();
+  },
+  send: function() {
+    var sendables =  [];
+    var that = this;
+    _.each(this.subviews, function(view) {
+      sendables.push(new Collections.NLCDocuments(view.collection.where({isSelected: true})).toJSON());
+    });
+    console.log(_.flatten(sendables));
   },
   getLinksFromCSV : function() {
     //Where we parse the csv and then return the Array of JSON
-    var links = [
-      {
-        groupName: "First Group",
-        links: [
-          { linkName: "Test Document 1", mail: true},
-          { linkName: "Test Document 2", mail: false},
-          { linkName: "Test Document 3", mail: true}
-        ]
-      },
-      {
-        groupName: "Second Group",
-        links: [
-          { linkName: "Test Document 4", mail: false},
-          { linkName: "Test Document 5", mail: true},
-          { linkName: "Test Document 6", mail: true}
-        ]
+    // $.ajax({ //my ajax request
+    //         url: "http://www.kcba.org/pbs/pdf/NLCMap.csv",
+    //         type: "GET",
+    //         dataType: "text",
+    //         success : function(response){
+    //          // csvToArray(response);
+    //          arr1 = csvToArray(str1);
+    //          console.log(arr1);
+    //         }
+    // });
+
+    var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
+          "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\n"+
+          "Client Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE";
+
+    var arr1 = csvToArray(str1);
+    // console.log(arr1);
+    var links = arrToJson(arr1);
+    console.log(links);
+
+    //convert array to json
+    function arrToJson(arr){
+      var arr2 = [];
+      for(var i=1; i<arr.length; i++){
+        var obj = {};
+        obj["links"] = {};
+        obj["links"]["linkName"] = arr[i][0];
+        obj["groupName"] = arr[i][1];
+        obj["links"]["linkURL"] = arr[i][2];
+        obj["links"]["mail"] = Boolean.valueOf(arr[i][3])();
+        arr2.push(obj);
       }
-    ];
+      return arr2;
+    }
+
+    //Convert CSV to Array
+    function csvToArray (strData, strDelimiter){
+        // Check to see if the delimiter is defined. If not,
+        // then default to comma.
+        strDelimiter = (strDelimiter || ",");
+
+        // Create a regular expression to parse the CSV values.
+        var objPattern = new RegExp(
+            (
+                // Delimiters.
+                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+                // Quoted fields.
+                "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+                // Standard fields.
+                "([^\"\\" + strDelimiter + "\\r\\n]*))"
+            ),
+            "gi"
+            );
+        // Create an array to hold our data. Give the array
+        // a default empty first row.
+        var arrData = [[]];
+
+        // Create an array to hold our individual pattern
+        // matching groups.
+        var arrMatches = null;
+
+
+        // Keep looping over the regular expression matches
+        // until we can no longer find a match.
+        while (arrMatches = objPattern.exec(strData)) {
+
+            // Get the delimiter that was found.
+            var strMatchedDelimiter = arrMatches[1];
+
+            // Check to see if the given delimiter has a length
+            // (is not the start of string) and if it matches
+            // field delimiter. If id does not, then we know
+            // that this delimiter is a row delimiter.
+            if (
+                strMatchedDelimiter.length &&
+                strMatchedDelimiter !== strDelimiter
+                ) {
+
+                // Since we have reached a new row of data,
+                // add an empty row to our data array.
+                arrData.push([]);
+
+            }
+
+            var strMatchedValue;
+
+            // Now that we have our delimiter out of the way,
+            // let's check to see which kind of value we
+            // captured (quoted or unquoted).
+            if (arrMatches[2]) {
+
+                // We found a quoted value. When we capture
+                // this value, unescape any double quotes.
+                strMatchedValue = arrMatches[2].replace(
+                    new RegExp("\"\"", "g"),
+                    "\""
+                    );
+
+            } else {
+
+                // We found a non-quoted value.
+                strMatchedValue = arrMatches[3];
+
+            }
+
+
+            // Now that we have our value string, let's add
+            // it to the data array.
+            arrData[arrData.length - 1].push(strMatchedValue);
+        }
+
+        // Return the parsed data.
+        return (arrData);
+    };
+
     return links;
   }
 });

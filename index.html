@@ -30,13 +30,11 @@
   <body>
 	<nav class="navbar navbar-default">
 	  <div class="container">
-	    <div class="navbar-header">
-	      <div class="title h2">
-	        Document Helper
-	      </div>
+	    <div class="title h2">
+	    	Document Helper
 	    </div>
-	    <div id="emailToggle" class="btn-group navbar-center" role="group" aria-label="...">
-		    <button id="emailButton" type="button" class="btn btn-default active"> Email </button>
+	    <div id="emailToggle" class="btn-group navbar-center" role="group" >
+		    <button id="emailButton" type="button" class="btn btn-default"> Email </button>
 		    <button id="mailButton" type="button" class="btn btn-default"> Mail </button>
 	   </div>
 	  </div>
@@ -44,9 +42,15 @@
   <div id="main" class="container">
   </div>
 	<nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
-		<div class="form-group">
+		<div id="emailForm" class="form-group">
 		    <input type="email" class="form-control" id="emailAddress" placeholder="default: legalAid@gmail.com">
 		</div>
+
+		<div id="mailForm" class="form-group" >
+			<input type="name" class="form-control" id="receiverName" placeholder="Receiver Name">
+		    <input type="address" class="form-control" id="homeAddress" placeholder="1111 East Central Street, Seattle WA 98122">
+		</div>
+
 		<button id="send" type="button" class="btn btn-primary"> Send </button>
 	</nav>
 
@@ -57,9 +61,9 @@
    </script>
    <script id="link" type="text/template">
      <li class="list-group-item">{{linkName}}
-     <div class="documentSelect">
-       <input type="checkbox" aria-label="...">
-     </div>
+       <div class="documentSelect">
+         <input type="checkbox" aria-label="...">
+       </div>
      </li>
    </script>
   </body>
