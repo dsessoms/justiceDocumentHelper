@@ -1,21 +1,45 @@
 <html>
 <head>
 	<title></title>
+
 	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
 		var arr1 = [];
-		$.ajax({ //my ajax request
-		        url: "http://www.kcba.org/pbs/pdf/NLCMap.csv",
-		        type: "GET",
-		        cache: false,
-		        dataType: "text",
-		        crossDomain: true,
-		        success : function(response){
-		        	arr1 = csvToArray(response);
-		        }
-		});
+		var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
+					"Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,no\r\n"+
+					"Client Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,no\r\n";
+
+		// $.ajax({ //my ajax request
+		//         url: "http://www.kcba.org/pbs/pdf/NLCMap.csv",
+		//         type: "GET",
+		//         dataType: "text",
+		//         success : function(response){
+		//         	// csvToArray(response);
+		//         	arr1 = csvToArray(str1);
+		//         	console.log(arr1);
+		//         }
+		// });
+
+		arr1 = csvToArray(str1);
+		console.log(arr1);
+		var arr2 = arrToJson(arr1);
+		console.log(arr2);
+
+		function arrToJson(arr){
+			var arr2 = [];
+			for(var i=0; i<arr.length; i++){
+				var obj = {};
+				obj["links"] = {};
+				obj["links"]["linkName"] = arr[i][0];
+				obj["Group Name"] = arr[i][1];
+				obj["links"]["linkURL"] = arr[i][2];
+				obj["links"]["mail"] = arr[i][3];
+				arr2.push(obj);
+			}
+			return arr2;
+		}
 
 		function csvToArray (strData, strDelimiter){
 	        // Check to see if the delimiter is defined. If not,
