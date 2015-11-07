@@ -32,6 +32,7 @@ Views.NLCDocument = Backbone.View.extend({
   },
   render: function() {
     this.$el.html(this.template(this.model.toJSON()));
+    this.$el.find("input").prop('checked', this.model.get("isSelected"));
     return this;
   },
   events: 
@@ -56,11 +57,15 @@ Views.NLCDocumentGroup = Backbone.View.extend({
     this.template = _.template($('#docGroup').html());
     this.collection = new Collections.NLCDocuments(this.model.get("links"));
   },
-  render: function() {
+  render: function(filterMails) {
     this.$el.html(this.template(this.model.toJSON()));
     var $links = this.$el.find(".list-group"); 
     $links.empty();
     this.collection.each(function(model) {
+      if(filterMails && !model.get("mail")) 
+      {
+        return;
+      }
       var nlcDocument = new Views.NLCDocument({
         model: model
       });
@@ -81,22 +86,64 @@ Views.NLC = Backbone.View.extend({
   collection: null,
   initialize: function() {
     this.collection = new Collections.NLCDocumentGroups(this.getLinksFromCSV());
-    this.mode = "email"; 
-    this.render();
-  },
-  render: function() {
-    this.$el.empty();
+    this.subviews = [];
     var that = this;
     this.collection.each(function(group) {
       var nlcDocumentGroup = new Views.NLCDocumentGroup({
         model: group
       });
-      that.$el.append(nlcDocumentGroup.render().el);
+      that.subviews.push(nlcDocumentGroup);
     });
+    this.mode = "email"; 
+    this.render();
+  },
+  render: function() {
+    var $main = this.$el.find("#main");
+    $main.empty();
+    var that = this;
+    if(this.mode == "email")
+    {
+      this.$el.find("#mailButton").removeClass("active");
+      this.$el.find("#emailButton").addClass("active");
+      this.$el.find("#mailForm").hide("");
+      this.$el.find("#emailForm").show("");
+    }
+    else 
+    {
+      this.$el.find("#emailButton").removeClass("active");
+      this.$el.find("#mailButton").addClass("active");
+      this.$el.find("#emailForm").hide("");
+      this.$el.find("#mailForm").show("");
+    }
+    _.each(this.subviews, function(view)
+    {
+      $main.append(view.render(that.mode == "mail").el);
+    });
+  },
+  events:
+  {
+    "click #emailButton": "emailMode", 
+    "click #mailButton": "mailMode",
+    "click #send": "send" 
+  },
+  emailMode: function() {
+    this.mode = "email";
+    this.render();
+  },
+  mailMode: function() {
+    this.mode = "mail";
+    this.render();
+  },
+  send: function() {
+    var sendables =  [];
+    var that = this;
+    _.each(this.subviews, function(view) {
+      sendables.push(new Collections.NLCDocuments(view.collection.where({isSelected: true})).toJSON());
+    });
+    console.log(_.flatten(sendables));
   },
   getLinksFromCSV : function() {
     //Where we parse the csv and then return the Array of JSON
-
     // $.ajax({ //my ajax request
     //         url: "http://www.kcba.org/pbs/pdf/NLCMap.csv",
     //         type: "GET",
@@ -231,7 +278,6 @@ Views.NLC = Backbone.View.extend({
 
 $(function() {
   var documentGroup = new Views.NLC({
-    el: $("#main")
+    el: $("body")
   });
 });
-
