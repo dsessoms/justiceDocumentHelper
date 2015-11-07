@@ -77,18 +77,50 @@ Views.NLCDocumentGroup = Backbone.View.extend({
   }
 });
 
+Views.NLC = Backbone.View.extend({
+  collection: null,
+  initialize: function() {
+    this.collection = new Collections.NLCDocumentGroups(this.getLinksFromCSV());
+    this.mode = "email"; 
+    this.render();
+  },
+  render: function() {
+    this.$el.empty();
+    var that = this;
+    this.collection.each(function(group) {
+      var nlcDocumentGroup = new Views.NLCDocumentGroup({
+        model: group
+      });
+      that.$el.append(nlcDocumentGroup.render().el);
+    });
+  },
+  getLinksFromCSV : function() {
+    //Where we parse the csv and then return the Array of JSON
+    var links = [
+      {
+        groupName: "First Group",
+        links: [
+          { linkName: "Test Document 1"},
+          { linkName: "Test Document 2"},
+          { linkName: "Test Document 3"}
+        ]
+      },
+      {
+        groupName: "Second Group",
+        links: [
+          { linkName: "Test Document 4"},
+          { linkName: "Test Document 5"},
+          { linkName: "Test Document 6"}
+        ]
+      }
+    ];
+    return links;
+  }
+});
+
 
 $(function() {
-  var documentGroup = new Views.NLCDocumentGroup({
-    model: new Models.NLCDocumentGroup(
-    {
-      groupName: "First Group",
-      links: [
-        { linkName: "Test Document 1"},
-        { linkName: "Test Document 2"},
-        { linkName: "Test Document 3"}
-      ]
-    })
+  var documentGroup = new Views.NLC({
+    el: $("#main")
   });
-  $("body").append(documentGroup.render().el);
 });
