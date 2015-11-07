@@ -165,18 +165,45 @@ Views.NLC = Backbone.View.extend({
     console.log(links);
 
     //convert array to json
+    // function arrToJson(arr){
+    //   var arr2 = [];
+    //   for(var i=1; i<arr.length; i++){
+    //     var obj = {};
+    //     obj["links"] = {};
+    //     obj["links"]["linkName"] = arr[i][0];
+    //     obj["groupName"] = arr[i][1];
+    //     obj["links"]["linkURL"] = arr[i][2];
+    //     obj["links"]["mail"] = Boolean.valueOf(arr[i][3])();
+    //     arr2.push(obj);
+    //   }
+    //   return arr2;
+    // }
+
+    //convert array to json
     function arrToJson(arr){
-      var arr2 = [];
+      console.log(arr);
+      var arr2 = {};
       for(var i=1; i<arr.length; i++){
-        var obj = {};
-        obj["links"] = {};
-        obj["links"]["linkName"] = arr[i][0];
-        obj["groupName"] = arr[i][1];
-        obj["links"]["linkURL"] = arr[i][2];
-        obj["links"]["mail"] = Boolean.valueOf(arr[i][3])();
-        arr2.push(obj);
+        var obj1 = {};
+        if(!arr2[arr[i][1]]){
+          arr2[arr[i][1]] = {};
+        }
+        arr2[arr[i][1]]["groupName"] = arr[i][1];
+        if(!arr2[arr[i][1]]["links"]){
+          arr2[arr[i][1]]["links"] = [];
+        }
+
+        obj1["linkName"] = arr[i][0];
+        obj1["linkURL"] = arr[i][2];
+        obj1["mail"] = Boolean.valueOf(arr[i][3])();
+        console.log(obj1);
+        arr2[arr[i][1]]["links"].push(obj1);
       }
-      return arr2;
+      var arr3 = [];
+      for(var i in arr2){
+        arr3.push(arr2[i]);
+      }
+      return arr3;
     }
 
     //Convert CSV to Array

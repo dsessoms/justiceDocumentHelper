@@ -25,18 +25,21 @@
     <script src="js/underscore-min.js"></script>
     <script src="js/backbone-min.js"></script>
     <script src="js/justiceDocumentHelper.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
   </head>
   <body>
 	<nav class="navbar navbar-default">
-	  <div class="container">
+		<button id="info" type="button" class="btn-info btn-lg.round pull-right" data-toggle="modal" data-target="#myModal">
+			<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+		</button>
+	  <span class="container">
 	    <div class="title h2">
-	    	Document Helper
+	    	Document Mailer
 	    </div>
 	    <div id="emailToggle" class="btn-group navbar-center" role="group" >
 		    <button id="emailButton" type="button" class="btn btn-default"> Email </button>
 		    <button id="mailButton" type="button" class="btn btn-default"> Mail </button>
-	   </div>
+	   </span>
+
 	  </div>
 	</nav>
   <div id="main" class="container">
@@ -54,6 +57,27 @@
 		<button id="send" type="button" class="btn btn-primary"> Send </button>
 	</nav>
 
+	<!-- Modal -->
+	<div id="myModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Document Mailer</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>To provide your clients with useful documents, you can select from the list of packets and enter their email. If they don't have an email enter their name and home address and we will send them copies in the mail</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+
+	  </div>
+	</div>
+
   <script id="docGroup" type="text/template">
        <div class="panel-heading">{{groupName}}</div>
         <ul class="list-group"></ul>
@@ -62,7 +86,7 @@
    <script id="link" type="text/template">
      <li class="list-group-item">{{linkName}}
        <div class="documentSelect">
-         <input type="checkbox" aria-label="...">
+          <input type="checkbox">
        </div>
      </li>
    </script>
