@@ -21,11 +21,11 @@ namespace Email
              EnableSsl = true,
              DeliveryMethod = SmtpDeliveryMethod.Network,
              UseDefaultCredentials = false,
-             Credentials = new NetworkCredential("info@socedo.com","GoSocedo!123"),
+             Credentials = new NetworkCredential("neighborhoodlegalclinics@gmail.com","KCBAPBS4y!3"),
              Timeout = 30000
            };
       
-           MailAddress from = new MailAddress("info@socedo.com");
+           MailAddress from = new MailAddress("neighborhoodlegalclinics@gmail.com");
            MailAddress to = new MailAddress(toAddress);
            MailMessage message = new MailMessage(from, to);
   

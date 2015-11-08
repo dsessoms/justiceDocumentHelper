@@ -139,9 +139,12 @@ Views.NLC = Backbone.View.extend({
   },
   send: function() {
     var toAddress = this.$el.find("#emailAddress").val();
+    var homeAddress = this.$el.find("#homeAddress").val();
+    var name = this.$el.find("#receiverName").val();
+     
     if(toAddress.length == 0) 
     {
-       alert("No Destination Address Specified");
+       alert("No Email Address Specified");
        return;
     } 
     var sendables =  [];
@@ -157,17 +160,39 @@ Views.NLC = Backbone.View.extend({
       return;
     }
     _.each(sendables, function(sendable) {
-      linkContent += sendable.linkName + ": " + sendable.linkURL + "\r\n\r\n";
+      linkContent += sendable.linkName + ": " + sendable.linkURL + "\r\n";
     });
-    var body = this.formatEmail(_.flatten(sendables));
-    this.sendEmail("Neighborhood Legal Clinic Appointment Followup", toAddress, body);
+    var body = "";
+    if(this.mode == "email"){
+      body = this.formatEmail(linkContent, name );
+    } else 
+    {
+      if(homeAddress.length == 0) 
+      {
+         alert("No Mailing Address Specified");
+         return;
+      }
+      toAddress = "neighborhoodlegalclinics@gmail.com"; 
+      body = this.formatMail(linkContent, name, homeAddress);
+    }
+    console.log(body);
+    //this.sendEmail("Neighborhood Legal Clinic Appointment Followup", toAddress, body);
    },
-  formatEmail: function(sendables) {
-    var body = "Hello there, \r\n\r\n" + 
+   formatEmail: function(linkContent, name) {
+    var body = "Hi " + name + ", \r\n\r\n" + 
       "Here are your documents from the Neighborhood Legal Clinic: \r\n\r\n";
+    body += linkContent + "\r\n";
     body += "This is an auto generated message. Please do not respond to this email. If you need further legal advice please call the Neighborhood Legal Clinics scheduling line to book an appointment. Call 206-267-7070 from 9:00 a.m. to Noon Tuesday – Thursday.";
     return body;
-  },
+   },
+   formatMail: function(linkContent, name, address) {
+    var body = "Hi team, \r\n\r\n" + 
+      "Please send the following documents to the following address: \r\n\r\n";
+    body += name + "\r\n" + address + "\r\n\r\n";
+    body += linkContent + "\r\n";
+    body += "This is an auto generated message. Please do not respond to this email. If you need further legal advice please call the Neighborhood Legal Clinics scheduling line to book an appointment. Call 206-267-7070 from 9:00 a.m. to Noon Tuesday – Thursday.";
+    return body; 
+   },
   sendEmail: function(subject, toAddress, body)
   {
     $.ajax({
@@ -175,7 +200,13 @@ Views.NLC = Backbone.View.extend({
       url: "Email.aspx/SendMessage",
       data: "{'subject': '" + subject + "', 'toAddress': '" + toAddress + "', 'body': '" + body +"'}",
       contentType: "application/json; charset=utf-8",
-      dataType: "json"
+      dataType: "json",
+      success: function(data) {
+        alert("Email Sent :)");
+      },
+      error: function(data){
+        alert("Email send failed :(");
+      }
     })
   },
   getLinksFromCSV : function() {
