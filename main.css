@@ -1,4 +1,15 @@
-body { padding-bottom: 120px; }
+body { 
+	padding-bottom: 160px; 
+	padding-top: 150px; 
+}
+
+#emailButton {
+	min-width: 90px;
+}
+
+#mailButton {
+	min-width: 90px;
+}
 
 #emailAddress { 
 	margin-top: 10px;
@@ -27,7 +38,7 @@ body { padding-bottom: 120px; }
 
 #info {
 	border-radius: 24px;
-	background-color: rgb(222,0,100);
+	background-color: rgb(191,46,27);
 	border: none;
 	margin-right: 10px;
 	margin-top: 10px;
@@ -42,7 +53,7 @@ body { padding-bottom: 120px; }
 }
 
 .navbar { 
-	background-color: rgb(222,0,100);
+	background-color: rgb(191,46,27);
 	text-align: center;
 }
 
@@ -61,4 +72,20 @@ body { padding-bottom: 120px; }
 {
    margin-right:0;
    float:right;
+}
+
+.panel-heading{
+	background-color: rgb(222,222,222);
+	font-weight:bold;
+}
+
+.eye{
+	max-width:30px;
+	max-height:30px;
+	height:8%;
+	width:8%;
+	margin-left:-10px;
+	padding-right:6px;
+	padding-bottom:1px;
+	z-index:1;
 }
