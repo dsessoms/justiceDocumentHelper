@@ -1,3 +1,5 @@
+$(".eye").click(console.log("clicked"));
+
 window.Models = {};
 window.Collections = {};
 window.Views = {};
@@ -37,7 +39,7 @@ Views.NLCDocument = Backbone.View.extend({
   },
   events: 
   {
-    "click .list-group-item" : "toggleSelected"
+    "click .js-click-target" : "toggleSelected"
   },
   toggleSelected: function() {
     if(this.model.get("isSelected")){
@@ -60,7 +62,7 @@ Views.NLCDocumentGroup = Backbone.View.extend({
   render: function(filterMails) {
     this.$el.html(this.template(this.model.toJSON()));
     var $links = this.$el.find(".list-group"); 
-    $links.empty();
+    $links.find("li").detach();
     this.collection.each(function(model) {
       if(filterMails && !model.get("mail")) 
       {
@@ -71,6 +73,7 @@ Views.NLCDocumentGroup = Backbone.View.extend({
       });
       $links.append(nlcDocument.render().el);
     });
+    if($links.html().length == 0) this.$el.html("");
     return this;
   },
   events:
@@ -99,7 +102,7 @@ Views.NLC = Backbone.View.extend({
   },
   render: function() {
     var $main = this.$el.find("#main");
-    $main.empty();
+    $main.find(".doc-group").detach("");
     var that = this;
     if(this.mode == "email")
     {
@@ -135,12 +138,45 @@ Views.NLC = Backbone.View.extend({
     this.render();
   },
   send: function() {
+    var toAddress = this.$el.find("#emailAddress").val();
+    if(toAddress.length == 0) 
+    {
+       alert("No Destination Address Specified");
+       return;
+    } 
     var sendables =  [];
     var that = this;
     _.each(this.subviews, function(view) {
       sendables.push(new Collections.NLCDocuments(view.collection.where({isSelected: true})).toJSON());
     });
-    console.log(_.flatten(sendables));
+    var linkContent = "";
+    sendables = _.flatten(sendables);
+    if(sendables.length == 0)
+    {
+      alert("No Documents Selected");
+      return;
+    }
+    _.each(sendables, function(sendable) {
+      linkContent += sendable.linkName + ": " + sendable.linkURL + "\r\n\r\n";
+    });
+    var body = this.formatEmail(_.flatten(sendables));
+    this.sendEmail("Neighborhood Legal Clinic Appointment Followup", toAddress, body);
+   },
+  formatEmail: function(sendables) {
+    var body = "Hello there, \r\n\r\n" + 
+      "Here are your documents from the Neighborhood Legal Clinic: \r\n\r\n";
+    body += "This is an auto generated message. Please do not respond to this email. If you need further legal advice please call the Neighborhood Legal Clinics scheduling line to book an appointment. Call 206-267-7070 from 9:00 a.m. to Noon Tuesday – Thursday.";
+    return body;
+  },
+  sendEmail: function(subject, toAddress, body)
+  {
+    $.ajax({
+      type: "POST",
+      url: "Email.aspx/SendMessage",
+      data: "{'subject': '" + subject + "', 'toAddress': '" + toAddress + "', 'body': '" + body +"'}",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json"
+    })
   },
   getLinksFromCSV : function() {
     //Where we parse the csv and then return the Array of JSON

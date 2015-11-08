@@ -48,11 +48,11 @@
 		<div id="formContainer" class="container">
 			<input type="name" class="form-control" id="receiverName" placeholder="Receiver Name">
 			<div id="emailForm" class="form-group .form-horizontal">
-			    <input type="email" class="form-control" id="emailAddress" placeholder="default: legalAid@gmail.com">
+			    <input type="email" class="form-control" id="emailAddress" placeholder="Email">
 			</div>
 
 			<div id="mailForm" class="form-group" >
-			    <input type="address" class="form-control" id="homeAddress" placeholder="1111 East Central Street, Seattle WA 98122">
+			    <input type="address" class="form-control" id="homeAddress" placeholder="Physical Address: (ex :1111 East Central Street, Seattle WA 98122)">
 			</div>
 		</div>
 
@@ -81,16 +81,20 @@
 	</div>
 
   <script id="docGroup" type="text/template">
-       <div class="panel-heading">{{groupName}}</div>
-        <ul class="list-group"></ul>
-       </div>
+    <div class="doc-group">
+      <div class="panel-heading">{{groupName}}</div>
+      <ul class="list-group"></ul>
+    </div>
    </script>
    <script id="link" type="text/template">
-     <li class="list-group-item">{{linkName}}
-      <img src= ""><a href = {{link}}></a></img>
+     <li class="list-group-item">
+      <a target= "_blank" href={{linkURL}}><img class= "eye" src= "preview.png"></img></a>
+      <span class="js-click-target">
+      {{linkName}}
        <div class="documentSelect">
           <input type="checkbox">
        </div>
+       </span>
      </li>
    </script>
   </body>
