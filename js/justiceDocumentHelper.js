@@ -269,7 +269,7 @@ Views.NLC = Backbone.View.extend({
 
         obj1["linkName"] = arr[i][0];
         obj1["linkURL"] = arr[i][2];
-        obj1["mail"] = Boolean.valueOf(arr[i][3])();
+        obj1["mail"] = arr[i][3] == "TRUE";
         arr2[arr[i][1]]["links"].push(obj1);
       }
       var arr3 = [];
