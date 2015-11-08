@@ -138,22 +138,45 @@ Views.NLC = Backbone.View.extend({
     this.render();
   },
   send: function() {
+    var toAddress = this.$el.find("#emailAddress").val();
+    if(toAddress.length == 0) 
+    {
+       alert("No Destination Address Specified");
+       return;
+    } 
     var sendables =  [];
     var that = this;
     _.each(this.subviews, function(view) {
       sendables.push(new Collections.NLCDocuments(view.collection.where({isSelected: true})).toJSON());
     });
     var linkContent = "";
-    _.each(sendables, function(_.flatten(sendable)) {
+    sendables = _.flatten(sendables);
+    if(sendables.length == 0)
+    {
+      alert("No Documents Selected");
+      return;
+    }
+    _.each(sendables, function(sendable) {
       linkContent += sendable.linkName + ": " + sendable.linkURL + "\r\n\r\n";
     });
-    this.formatEmail(_.flatten(sendables));
-  },
+    var body = this.formatEmail(_.flatten(sendables));
+    this.sendEmail("Neighborhood Legal Clinic Appointment Followup", toAddress, body);
+   },
   formatEmail: function(sendables) {
     var body = "Hello there, \r\n\r\n" + 
       "Here are your documents from the Neighborhood Legal Clinic: \r\n\r\n";
     body += "This is an auto generated message. Please do not respond to this email. If you need further legal advice please call the Neighborhood Legal Clinics scheduling line to book an appointment. Call 206-267-7070 from 9:00 a.m. to Noon Tuesday – Thursday.";
-    alert(body);
+    return body;
+  },
+  sendEmail: function(subject, toAddress, body)
+  {
+    $.ajax({
+      type: "POST",
+      url: "Email.aspx/SendMessage",
+      data: "{'subject': '" + subject + "', 'toAddress': '" + toAddress + "', 'body': '" + body +"'}",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json"
+    })
   },
   getLinksFromCSV : function() {
     //Where we parse the csv and then return the Array of JSON
