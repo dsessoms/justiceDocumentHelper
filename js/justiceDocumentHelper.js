@@ -187,6 +187,7 @@ Views.NLC = Backbone.View.extend({
       for(var i in arr2){
         arr3.push(arr2[i]);
       }
+      arr3.pop();
       return arr3;
     }
 
