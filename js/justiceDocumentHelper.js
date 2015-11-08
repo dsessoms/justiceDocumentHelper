@@ -143,11 +143,6 @@ Views.NLC = Backbone.View.extend({
     var name = this.$el.find("#receiverName").val();
     var notes = this.$el.find("#notes").val();
      
-    if(toAddress.length == 0) 
-    {
-       alert("No Email Address Specified");
-       return;
-    } 
     var sendables =  [];
     var that = this;
     _.each(this.subviews, function(view) {
@@ -165,6 +160,11 @@ Views.NLC = Backbone.View.extend({
     });
     var body = "";
     if(this.mode == "email"){
+      if(toAddress.length == 0) 
+      {
+         alert("No Email Address Specified");
+         return;
+      } 
       body = this.formatEmail(linkContent, name, notes );
     } else 
     {
