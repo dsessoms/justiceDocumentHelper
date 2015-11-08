@@ -15,6 +15,10 @@ body {
 	margin-top: 10px;
 }
 
+#notes {
+	margin-bottom: 10px;
+}
+
 #emailToggle{
 	display: inline-block;
 }
