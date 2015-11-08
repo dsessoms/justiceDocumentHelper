@@ -60,7 +60,7 @@ Views.NLCDocumentGroup = Backbone.View.extend({
   render: function(filterMails) {
     this.$el.html(this.template(this.model.toJSON()));
     var $links = this.$el.find(".list-group"); 
-    $links.empty();
+    $links.find("li").detach();
     this.collection.each(function(model) {
       if(filterMails && !model.get("mail")) 
       {
@@ -71,6 +71,7 @@ Views.NLCDocumentGroup = Backbone.View.extend({
       });
       $links.append(nlcDocument.render().el);
     });
+    if($links.html().length == 0) this.$el.html("");
     return this;
   },
   events:
@@ -99,7 +100,7 @@ Views.NLC = Backbone.View.extend({
   },
   render: function() {
     var $main = this.$el.find("#main");
-    $main.empty();
+    $main.find(".doc-group").detach("");
     var that = this;
     if(this.mode == "email")
     {
@@ -140,7 +141,17 @@ Views.NLC = Backbone.View.extend({
     _.each(this.subviews, function(view) {
       sendables.push(new Collections.NLCDocuments(view.collection.where({isSelected: true})).toJSON());
     });
-    console.log(_.flatten(sendables));
+    var linkContent = "";
+    _.each(sendables, function(_.flatten(sendable)) {
+      linkContent += sendable.linkName + ": " + sendable.linkURL + "\r\n\r\n";
+    });
+    this.formatEmail(_.flatten(sendables));
+  },
+  formatEmail: function(sendables) {
+    var body = "Hello there, \r\n\r\n" + 
+      "Here are your documents from the Neighborhood Legal Clinic: \r\n\r\n";
+    body += "This is an auto generated message. Please do not respond to this email. If you need further legal advice please call the Neighborhood Legal Clinics scheduling line to book an appointment. Call 206-267-7070 from 9:00 a.m. to Noon Tuesday – Thursday.";
+    alert(body);
   },
   getLinksFromCSV : function() {
     //Where we parse the csv and then return the Array of JSON
