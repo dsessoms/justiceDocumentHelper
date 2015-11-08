@@ -176,8 +176,8 @@ Views.NLC = Backbone.View.extend({
       toAddress = "neighborhoodlegalclinics@gmail.com"; 
       body = this.formatMail(linkContent, name, homeAddress, notes);
     }
-    console.log(body);
-    //this.sendEmail("Neighborhood Legal Clinic Appointment Followup", toAddress, body);
+    //console.log(body);
+    this.sendEmail("Neighborhood Legal Clinic Appointment Followup", toAddress, body);
    },
    formatEmail: function(linkContent, name, notes) {
     var body = "Hi " + name + ", \r\n\r\n" + 
@@ -224,26 +224,26 @@ Views.NLC = Backbone.View.extend({
     var arr1;
 
     // ------------- LIVE DATA --------------
-//    $.ajax({ //my ajax request
-//            url: "../NLCMap.csv",
-//            type: "GET",
-//            dataType: "text",
-//            async: false,
-//            success : function(response){
-//             response = forceUnicodeEncoding(response);
-//             console.log("ajax response: "+response);
-//             arr1 = csvToArray(response);
-//             console.log("arr1 "+arr1);
-//            }
-//    });
+    $.ajax({ //my ajax request
+            url: "../NLCMap.csv",
+            type: "GET",
+            dataType: "text",
+            async: false,
+            success : function(response){
+             response = forceUnicodeEncoding(response);
+             console.log("ajax response: "+response);
+             arr1 = csvToArray(response);
+             console.log("arr1 "+arr1);
+            }
+    });
     // ------------- LIVE DATA --------------
 
     // ------------- LOCAL DATA -------------
-     var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
-           "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\nClient Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—Spanish,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY2,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-English.pdf,FALSE";
-     console.log(str1);
-     arr1 = csvToArray(str1);
-     console.log(arr1);
+//     var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
+//           "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\nClient Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—Spanish,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY2,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-English.pdf,FALSE";
+//     console.log(str1);
+//     arr1 = csvToArray(str1);
+//     console.log(arr1);
     // ------------- LOCAL DATA -------------
 
     var links = arrToJson(arr1);
