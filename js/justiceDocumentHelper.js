@@ -1,3 +1,5 @@
+$(".eye").click(console.log("clicked"));
+
 window.Models = {};
 window.Collections = {};
 window.Views = {};
@@ -37,7 +39,7 @@ Views.NLCDocument = Backbone.View.extend({
   },
   events: 
   {
-    "click .list-group-item" : "toggleSelected"
+    "click .js-click-target" : "toggleSelected"
   },
   toggleSelected: function() {
     if(this.model.get("isSelected")){
