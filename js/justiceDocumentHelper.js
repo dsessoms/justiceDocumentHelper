@@ -144,25 +144,38 @@ Views.NLC = Backbone.View.extend({
   },
   getLinksFromCSV : function() {
     //Where we parse the csv and then return the Array of JSON
+
     var arr1;
+
+    // ------------- LIVE DATA --------------
     $.ajax({ //my ajax request
             url: "../NLCMap.csv",
             type: "GET",
             dataType: "text",
             async: false,
             success : function(response){
+             response = forceUnicodeEncoding(response);
              console.log("ajax response: "+response);
              arr1 = csvToArray(response);
              console.log("arr1 "+arr1);
             }
     });
+    // ------------- LIVE DATA --------------
 
-    // sample data
+    // ------------- LOCAL DATA -------------
     // var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
     //       "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\nClient Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—Spanish,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY2,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-English.pdf,FALSE";
+    // console.log(str1);
+    // arr1 = csvToArray(str1);
+    // console.log(arr1);
+    // ------------- LOCAL DATA -------------
 
     var links = arrToJson(arr1);
     console.log("Links: "+links);
+
+    function forceUnicodeEncoding(string){
+      return unescape(encodeURIComponent(string));
+    }
 
     //convert array to json
     function arrToJson(arr){
