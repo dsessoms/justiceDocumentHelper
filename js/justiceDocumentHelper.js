@@ -138,43 +138,80 @@ Views.NLC = Backbone.View.extend({
     this.render();
   },
   send: function() {
+    var toAddress = this.$el.find("#emailAddress").val();
+    if(toAddress.length == 0) 
+    {
+       alert("No Destination Address Specified");
+       return;
+    } 
     var sendables =  [];
     var that = this;
     _.each(this.subviews, function(view) {
       sendables.push(new Collections.NLCDocuments(view.collection.where({isSelected: true})).toJSON());
     });
     var linkContent = "";
-    _.each(sendables, function(_.flatten(sendable)) {
+    sendables = _.flatten(sendables);
+    if(sendables.length == 0)
+    {
+      alert("No Documents Selected");
+      return;
+    }
+    _.each(sendables, function(sendable) {
       linkContent += sendable.linkName + ": " + sendable.linkURL + "\r\n\r\n";
     });
-    this.formatEmail(_.flatten(sendables));
-  },
+    var body = this.formatEmail(_.flatten(sendables));
+    this.sendEmail("Neighborhood Legal Clinic Appointment Followup", toAddress, body);
+   },
   formatEmail: function(sendables) {
     var body = "Hello there, \r\n\r\n" + 
       "Here are your documents from the Neighborhood Legal Clinic: \r\n\r\n";
     body += "This is an auto generated message. Please do not respond to this email. If you need further legal advice please call the Neighborhood Legal Clinics scheduling line to book an appointment. Call 206-267-7070 from 9:00 a.m. to Noon Tuesday – Thursday.";
-    alert(body);
+    return body;
+  },
+  sendEmail: function(subject, toAddress, body)
+  {
+    $.ajax({
+      type: "POST",
+      url: "Email.aspx/SendMessage",
+      data: "{'subject': '" + subject + "', 'toAddress': '" + toAddress + "', 'body': '" + body +"'}",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json"
+    })
   },
   getLinksFromCSV : function() {
     //Where we parse the csv and then return the Array of JSON
-    // $.ajax({ //my ajax request
-    //         url: "http://www.kcba.org/pbs/pdf/NLCMap.csv",
-    //         type: "GET",
-    //         dataType: "text",
-    //         success : function(response){
-    //          // csvToArray(response);
-    //          arr1 = csvToArray(str1);
-    //          console.log(arr1);
-    //         }
-    // });
 
-    var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
-          "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\nClient Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—Spanish,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY2,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-English.pdf,FALSE";
+    var arr1;
 
-    var arr1 = csvToArray(str1);
+    // ------------- LIVE DATA --------------
+    $.ajax({ //my ajax request
+            url: "../NLCMap.csv",
+            type: "GET",
+            dataType: "text",
+            async: false,
+            success : function(response){
+             response = forceUnicodeEncoding(response);
+             console.log("ajax response: "+response);
+             arr1 = csvToArray(response);
+             console.log("arr1 "+arr1);
+            }
+    });
+    // ------------- LIVE DATA --------------
+
+    // ------------- LOCAL DATA -------------
+    // var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
+    //       "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\nClient Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—Spanish,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY2,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-English.pdf,FALSE";
+    // console.log(str1);
+    // arr1 = csvToArray(str1);
     // console.log(arr1);
+    // ------------- LOCAL DATA -------------
+
     var links = arrToJson(arr1);
-    console.log(links);
+    console.log("Links: "+links);
+
+    function forceUnicodeEncoding(string){
+      return unescape(encodeURIComponent(string));
+    }
 
     //convert array to json
     function arrToJson(arr){
@@ -199,6 +236,7 @@ Views.NLC = Backbone.View.extend({
       for(var i in arr2){
         arr3.push(arr2[i]);
       }
+      arr3.pop();
       return arr3;
     }
 
@@ -230,11 +268,9 @@ Views.NLC = Backbone.View.extend({
         // matching groups.
         var arrMatches = null;
 
-
         // Keep looping over the regular expression matches
         // until we can no longer find a match.
         while (arrMatches = objPattern.exec(strData)) {
-
             // Get the delimiter that was found.
             var strMatchedDelimiter = arrMatches[1];
 
@@ -246,11 +282,9 @@ Views.NLC = Backbone.View.extend({
                 strMatchedDelimiter.length &&
                 strMatchedDelimiter !== strDelimiter
                 ) {
-
                 // Since we have reached a new row of data,
                 // add an empty row to our data array.
                 arrData.push([]);
-
             }
 
             var strMatchedValue;
@@ -282,7 +316,7 @@ Views.NLC = Backbone.View.extend({
 
         // Return the parsed data.
         return (arrData);
-    };
+    }; //Convert CSV to Array
 
     return links;
   }
