@@ -141,6 +141,7 @@ Views.NLC = Backbone.View.extend({
     var toAddress = this.$el.find("#emailAddress").val();
     var homeAddress = this.$el.find("#homeAddress").val();
     var name = this.$el.find("#receiverName").val();
+    var notes = this.$el.find("#notes").val();
      
     if(toAddress.length == 0) 
     {
@@ -164,7 +165,7 @@ Views.NLC = Backbone.View.extend({
     });
     var body = "";
     if(this.mode == "email"){
-      body = this.formatEmail(linkContent, name );
+      body = this.formatEmail(linkContent, name, notes );
     } else 
     {
       if(homeAddress.length == 0) 
@@ -173,23 +174,31 @@ Views.NLC = Backbone.View.extend({
          return;
       }
       toAddress = "neighborhoodlegalclinics@gmail.com"; 
-      body = this.formatMail(linkContent, name, homeAddress);
+      body = this.formatMail(linkContent, name, homeAddress, notes);
     }
     console.log(body);
     //this.sendEmail("Neighborhood Legal Clinic Appointment Followup", toAddress, body);
    },
-   formatEmail: function(linkContent, name) {
+   formatEmail: function(linkContent, name, notes) {
     var body = "Hi " + name + ", \r\n\r\n" + 
       "Here are your documents from the Neighborhood Legal Clinic: \r\n\r\n";
     body += linkContent + "\r\n";
+    if(notes.length > 0)
+    {
+      body += "Notes: " + notes + "\r\n\r\n";
+    }
     body += "This is an auto generated message. Please do not respond to this email. If you need further legal advice please call the Neighborhood Legal Clinics scheduling line to book an appointment. Call 206-267-7070 from 9:00 a.m. to Noon Tuesday – Thursday.";
     return body;
    },
-   formatMail: function(linkContent, name, address) {
+   formatMail: function(linkContent, name, address, notes) {
     var body = "Hi team, \r\n\r\n" + 
       "Please send the following documents to the following address: \r\n\r\n";
     body += name + "\r\n" + address + "\r\n\r\n";
     body += linkContent + "\r\n";
+    if(notes.length > 0)
+    {
+      body += "Notes: " + notes + "\r\n\r\n";
+    }
     body += "This is an auto generated message. Please do not respond to this email. If you need further legal advice please call the Neighborhood Legal Clinics scheduling line to book an appointment. Call 206-267-7070 from 9:00 a.m. to Noon Tuesday – Thursday.";
     return body; 
    },
@@ -215,26 +224,26 @@ Views.NLC = Backbone.View.extend({
     var arr1;
 
     // ------------- LIVE DATA --------------
-    $.ajax({ //my ajax request
-            url: "../NLCMap.csv",
-            type: "GET",
-            dataType: "text",
-            async: false,
-            success : function(response){
-             response = forceUnicodeEncoding(response);
-             console.log("ajax response: "+response);
-             arr1 = csvToArray(response);
-             console.log("arr1 "+arr1);
-            }
-    });
+//    $.ajax({ //my ajax request
+//            url: "../NLCMap.csv",
+//            type: "GET",
+//            dataType: "text",
+//            async: false,
+//            success : function(response){
+//             response = forceUnicodeEncoding(response);
+//             console.log("ajax response: "+response);
+//             arr1 = csvToArray(response);
+//             console.log("arr1 "+arr1);
+//            }
+//    });
     // ------------- LIVE DATA --------------
 
     // ------------- LOCAL DATA -------------
-    // var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
-    //       "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\nClient Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—Spanish,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY2,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-English.pdf,FALSE";
-    // console.log(str1);
-    // arr1 = csvToArray(str1);
-    // console.log(arr1);
+     var str1 = "Document Title,Document Category,Link,Available to receive by mail\r\n" +
+           "Client Intake Form - English,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/intakesheet.pdf,FALSE\r\nClient Intake Form—Spanish,ADMINISTRATION,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—Spanish,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY2,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-Spanish.pdf,FALSE\r\nClient Intake Form—English,CATEGORY,http://www.kcba.org/pbs/pdf/NLClinks/IntakeSheet-English.pdf,FALSE";
+     console.log(str1);
+     arr1 = csvToArray(str1);
+     console.log(arr1);
     // ------------- LOCAL DATA -------------
 
     var links = arrToJson(arr1);
