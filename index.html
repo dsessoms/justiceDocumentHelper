@@ -86,11 +86,14 @@
        </div>
    </script>
    <script id="link" type="text/template">
-     <li class="list-group-item">{{linkName}}
-      <img src= ""><a href = {{link}}></a></img>
+     <li class="list-group-item">
+      <a target= "_blank" href={{linkURL}}><img class= "eye" src= "preview.png"></img></a>
+      <span class="js-click-target">
+      {{linkName}}
        <div class="documentSelect">
           <input type="checkbox">
        </div>
+       </span>
      </li>
    </script>
   </body>
