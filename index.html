@@ -24,7 +24,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
     <script src="js/underscore-min.js"></script>
     <script src="js/backbone-min.js"></script>
-    <script src="js/justiceDocumentHelper.js"></script>
+    <script src="js/justiceDocumentHelper.js" charset="utf-8"></script>
   </head>
   <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -46,14 +46,15 @@
   </div>
 	<nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
 		<div id="formContainer" class="container">
-			<input type="name" class="form-control" id="receiverName" placeholder="Receiver Name">
+			<input type="name" class="form-control" id="receiverName" placeholder="Client Name">
 			<div id="emailForm" class="form-group .form-horizontal">
-			    <input type="email" class="form-control" id="emailAddress" placeholder="Email">
+			    <input type="email" class="form-control" id="emailAddress" placeholder="Client Email">
 			</div>
 
 			<div id="mailForm" class="form-group" >
-			    <input type="address" class="form-control" id="homeAddress" placeholder="Physical Address: (ex :1111 East Central Street, Seattle WA 98122)">
+			    <input type="address" class="form-control" id="homeAddress" placeholder="Client Address: (ex :1111 East Central Street, Seattle WA 98122)">
 			</div>
+			<input type="notes" class="form-control" id="notes" placeholder="Additional Notes">
 		</div>
 
 		<button id="send" type="button" class="btn btn-primary"> Send </button>
@@ -70,11 +71,15 @@
 	        <h4 class="modal-title">NLC Resources Info</h4>
 	      </div>
 	      <div class="modal-body">
+<<<<<<< HEAD
 	        <p>This application is here to allow you to send your clients useful documents in two convenient ways: 
             <br>
             <br> <b>Email Tab:</b> Enter your client's name and email, select the appropriate documents and an automated email will be sent to them with the documents attached.
             <br> <b>Mailing Tab:</b> If your client has no access to email, enter your clients name and physical address, and KCBA will mail the documents to the individual.
             <br><br><i>Please note: Not all documents are available to be physically mailed and therefore may not be available in the mail selection menu.</i></p>
+=======
+	        <p>This application is here to allow you to send your clients useful documents in two convenient ways: <br> <br> 1.) Enter the client's name and email, select the appropriate documents, and hit send. <br> <br> 2.) Enter your client's name and physical address, hit send, and KCBA will mail the documents to the individual <br> <br> <i> please note: not all documents are available to be physically mailed and therefore may not be available in the mail selection menu <i></p>
+>>>>>>> origin/master
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
